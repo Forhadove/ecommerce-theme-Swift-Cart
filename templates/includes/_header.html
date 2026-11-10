@@ -1,0 +1,31 @@
+<!-- Top Announcement Bar -->
+<div class="top-bar">
+  <div class="container">
+    <div><i class="fa-solid fa-truck-fast"></i> Free Delivery on all orders over $150!</div>
+    <div>
+      <span style="margin-right: 15px;"><i class="fa-solid fa-tag"></i> Coupon: <strong>SAVE10</strong></span>
+      <span><i class="fa-solid fa-headset"></i> Support: +880 1700-000000</span>
+    </div>
+  </div>
+</div>
+
+<!-- Header Navigation -->
+<header class="site-header">
+  <div class="container">
+    <nav class="navbar">
+      <a href="{{ url_for('index') }}" class="brand-logo">
+        <i class="fa-solid fa-bag-shopping" style="color: var(--primary);"></i>
+        Swift<span>Cart</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="{{ url_for('index') }}" class="{{ 'active' if request.endpoint == 'index' }}">Home</a></li>
+        <li><a href="{{ url_for('products') }}" class="{{ 'active' if request.endpoint == 'products' }}">Products</a></li>
+        <li><a href="{{ url_for('cart') }}" class="{{ 'active' if request.endpoint == 'cart' }}">Cart</a></li>
+        <li><a href="{{ url_for('checkout') }}" class="{{ 'active' if request.endpoint == 'checkout' }}">Checkout</a></li>
+      </ul>
+
+      {% include 'includes/_cart_button.html' %}
+    </nav>
+  </div>
+</header>

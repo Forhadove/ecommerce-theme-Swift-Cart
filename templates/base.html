@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}SwiftCart - eCommerce Store{% endblock %}</title>
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+  {% include 'includes/_header.html' %}
+
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="container" style="margin-top: 18px;">
+        {% for category, message in messages %}
+          <div style="padding: 12px 16px; border-radius: 6px; margin-bottom: 10px; font-size: 0.95rem; font-weight: 500;
+                      background-color: {{ '#dcfce7' if category == 'success' else ('#fee2e2' if category == 'danger' else ('#fef3c7' if category == 'warning' else '#eff6ff')) }};
+                      color: {{ '#166534' if category == 'success' else ('#991b1b' if category == 'danger' else ('#92400e' if category == 'warning' else '#1e40af')) }};
+                      border: 1px solid {{ '#bbf7d0' if category == 'success' else ('#fecaca' if category == 'danger' else ('#fde68a' if category == 'warning' else '#bfdbfe')) }};">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- Page Content Block -->
+  {% block content %}{% endblock %}
+
+  {% include 'includes/_footer.html' %}
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block title %}SwiftCart - Home{% endblock %}
+
+{% block content %}
+  <!-- Hero Section -->
+  <section class="hero-banner">
+    <div class="container hero-grid">
+      <div class="hero-content">
+        <span class="badge badge-discount" style="margin-bottom: 12px;">Hot Tech 2026</span>
+        <h1>Discover the Best Deals on <span>Trending Products</span></h1>
+        <p>Upgrade your lifestyle with our curated collection of electronics, accessories, and fashion essentials.</p>
+        <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+          <a href="{{ url_for('products') }}" class="btn btn-primary">
+            <i class="fa-solid fa-bag-shopping"></i> Explore Products
+          </a>
+          <a href="{{ url_for('cart') }}" class="btn btn-outline">
+            <i class="fa-solid fa-cart-shopping"></i> View Cart
+          </a>
+        </div>
+      </div>
+      <div class="hero-img">
+        <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&auto=format&fit=crop&q=80" alt="Online Shopping">
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="container">
+    <div class="features-grid">
+      <div class="feature-item">
+        <div class="feature-icon"><i class="fa-solid fa-truck"></i></div>
+        <div class="feature-info">
+          <h4>Free & Fast Shipping</h4>
+          <p>Orders over $150 qualify</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon"><i class="fa-solid fa-shield-halved"></i></div>
+        <div class="feature-info">
+          <h4>Secure Checkout</h4>
+          <p>100% protected payments</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon"><i class="fa-solid fa-rotate-left"></i></div>
+        <div class="feature-info">
+          <h4>Easy 14-Day Return</h4>
+          <p>Hassle-free refunds</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+        <div class="feature-info">
+          <h4>24/7 Support</h4>
+          <p>Dedicated assistance</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Products Section -->
+  <section class="container" style="margin-bottom: 60px;">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">Featured Products</h2>
+        <p class="section-subtitle">Hand-picked top quality items just for you</p>
+      </div>
+      <a href="{{ url_for('products') }}" class="btn btn-outline">
+        View All <i class="fa-solid fa-arrow-right"></i>
+      </a>
+    </div>
+
+    <div class="products-grid">
+      {% for product in products %}
+      <div class="product-card">
+        <div class="product-image-wrap">
+          <div class="product-badge-wrap"><span class="badge badge-sale">Sale 33%</span></div>
+          <a href="{{ url_for('product_detail', product_id=product.id) }}">
+            <img src="{{ product.image }}" alt="{{ product.name }}">
+          </a>
+        </div>
+        <div class="product-details">
+          <span class="product-category">Electronics</span>
+          <h3 class="product-title"><a href="{{ url_for('product_detail', product_id=product.id) }}">{{ product.name }}</a></h3>
+          <div class="product-rating">
+            <i class="fa-solid fa-star"></i> {{ "%.1f"|format(4.8) }} <span>(124 reviews)</span>
+          </div>
+          <div class="product-price-row">
+            <div class="product-price">${{ "%.2f"|format(product.price) }} <span class="product-old-price">${{ "%.2f"|format(product.old_price) }}</span></div>
+            <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button type="submit" class="btn btn-primary btn-add-cart">
+                <i class="fa-solid fa-cart-plus"></i> Add to Cart
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <p>No products available.</p>
+      {% endfor %}
+    </div>
+  </section>
+{% endblock %}

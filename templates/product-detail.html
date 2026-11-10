@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}SwiftCart - {{ product.name }}{% endblock %}
+
+{% block content %}
+  <!-- Main Content -->
+  <main class="container">
+    <div class="breadcrumb">
+      <a href="{{ url_for('index') }}">Home</a>
+      <i class="fa-solid fa-chevron-right" style="font-size: 0.75rem;"></i>
+      <a href="{{ url_for('products') }}">Products</a>
+      <i class="fa-solid fa-chevron-right" style="font-size: 0.75rem;"></i>
+      <span>{{ product.name }}</span>
+    </div>
+
+    <!-- Single Product Detail Card -->
+    <div class="product-detail-layout">
+      <!-- Product Image Gallery Preview -->
+      <div class="detail-gallery">
+        <div class="detail-main-img">
+          <img src="{{ product.image }}" alt="{{ product.name }}">
+        </div>
+      </div>
+
+      <!-- Product Information -->
+      <div class="detail-info">
+        <span class="badge badge-discount" style="width: fit-content; margin-bottom: 8px;">Electronics</span>
+        <h1>{{ product.name }}</h1>
+
+        <div class="product-rating">
+          <i class="fa-solid fa-star"></i>
+          <strong>{{ "%.1f"|format(4.8) }}</strong>
+          <span>({{ "%.0f"|format(124) }} customer reviews)</span>
+        </div>
+
+        <div class="price-tag">
+          ${{ "%.2f"|format(product.price) }} <span class="old-price">${{ "%.2f"|format(product.old_price) }}</span>
+        </div>
+
+        <p class="desc-text">
+         {{ product.description }}
+        </p>
+
+        <!-- পাইথন সাবমিট ফর্ম (Add to Cart with Quantity) -->
+        <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <div class="detail-actions">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <label for="quantity" style="font-weight: 600;">Quantity:</label>
+              <input type="number" id="quantity" name="quantity" value="1" min="1" max="10" style="width: 70px; padding: 8px 10px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 1rem;">
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+              <i class="fa-solid fa-cart-plus"></i> Add to Cart
+            </button>
+            <a href="{{ url_for('cart') }}" class="btn btn-secondary">
+              Go to Cart <i class="fa-solid fa-arrow-right"></i>
+            </a>
+          </div>
+        </form>
+
+        <!-- Specifications / Info list -->
+        <div class="meta-list">
+          <span><strong>Availability:</strong> <span style="color: var(--success); font-weight: 600;">In Stock (Ready to Ship)</span></span>
+          <span><strong>Delivery:</strong> Estimated 2-4 business days</span>
+          <span><strong>Warranty:</strong> 1 Year Official Replacement Guarantee</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Related Products -->
+    <section style="margin: 50px 0 70px;">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Related Products</h2>
+          <p class="section-subtitle">You might also be interested in these</p>
+        </div>
+      </div>
+
+      <div class="products-grid">
+        <!-- Related Item 1 -->
+        <div class="product-card">
+          <div class="product-image-wrap">
+            <a href="{{ url_for('product_detail', product_id=2) }}">
+              <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80" alt="Watch">
+            </a>
+          </div>
+          <div class="product-details">
+            <span class="product-category">Watches</span>
+            <h3 class="product-title"><a href="{{ url_for('product_detail', product_id=2) }}">Minimalist Analog Smartwatch</a></h3>
+            <div class="product-price-row">
+              <div class="product-price">$49.50</div>
+              <form action="{{ url_for('add_to_cart', product_id=2) }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-primary btn-add-cart">Add</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+{% endblock %}

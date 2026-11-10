@@ -1,0 +1,20 @@
+<div class="nav-actions" style="display: flex; align-items: center; gap: 12px;">
+  {% if current_customer %}
+    <div style="display: inline-flex; align-items: center; gap: 6px; background: #eff6ff; padding: 5px 12px; border-radius: 20px; border: 1px solid #bfdbfe; font-size: 0.88rem; color: var(--secondary);">
+      <i class="fa-solid fa-user-check" style="color: var(--primary);"></i>
+      <span style="font-weight: 700; max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ current_customer.name.split()[0] }}</span>
+      <a href="{{ url_for('customer_logout') }}" title="Logout" style="color: #ef4444; margin-left: 4px; padding: 2px 4px; font-size: 0.82rem;">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+      </a>
+    </div>
+  {% else %}
+    <a href="{{ url_for('customer_login') }}" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border-color); font-size: 0.88rem; font-weight: 600; color: var(--secondary); background: #fff; text-decoration: none; transition: all 0.2s;">
+      <i class="fa-regular fa-user" style="color: var(--primary);"></i> Login
+    </a>
+  {% endif %}
+
+  <a href="{{ url_for('cart') }}" class="cart-icon-btn" title="View Cart">
+    <i class="fa-solid fa-cart-shopping"></i>
+    <span class="cart-count">{{ cart_count }}</span>
+  </a>
+</div>

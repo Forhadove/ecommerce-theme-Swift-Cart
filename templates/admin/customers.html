@@ -1,0 +1,84 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}Customers - SwiftCart Admin{% endblock %}
+{% block page_title %}Customer Directory{% endblock %}
+
+{% block content %}
+  <div class="admin-card">
+    <div class="admin-card-header">
+      <div>
+        <h2>Registered Customers ({{ customers|length }})</h2>
+        <p style="color: var(--text-muted); font-size: 0.88rem; margin-top: 2px;">
+          View customer profiles, contact numbers, and delivery addresses
+        </p>
+      </div>
+      <div>
+        <a href="{{ url_for('admin_orders') }}" class="btn btn-outline btn-sm">
+          <i class="fa-solid fa-cart-shopping"></i> View Orders
+        </a>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th style="width: 90px;">ID</th>
+            <th>Customer Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Shipping Address</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for customer in customers %}
+          <tr>
+            <td>
+              <strong>#CUST-{{ customer.id }}</strong>
+            </td>
+            <td>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 38px; height: 38px; border-radius: 50%; background: #eff6ff; color: var(--primary); font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; border: 1px solid #bfdbfe;">
+                  {{ (customer.name or 'C')[0]|upper }}
+                </div>
+                <div>
+                  <div style="font-weight: 700; color: var(--secondary);">{{ customer.name }}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <a href="mailto:{{ customer.email }}" style="color: var(--primary); text-decoration: none; font-weight: 500;">
+                <i class="fa-regular fa-envelope" style="margin-right: 4px; color: var(--text-muted);"></i>
+                {{ customer.email }}
+              </a>
+            </td>
+            <td>
+              {% if customer.phone %}
+              <a href="tel:{{ customer.phone }}" style="color: var(--text-main); text-decoration: none; font-weight: 500;">
+                <i class="fa-solid fa-phone" style="margin-right: 4px; color: var(--text-muted); font-size: 0.8rem;"></i>
+                {{ customer.phone }}
+              </a>
+              {% else %}
+              <span style="color: var(--text-muted);">-</span>
+              {% endif %}
+            </td>
+            <td>
+              <div style="color: var(--text-main); font-size: 0.9rem; max-width: 300px; line-height: 1.4;">
+                <i class="fa-solid fa-location-dot" style="margin-right: 4px; color: var(--text-muted); font-size: 0.85rem;"></i>
+                {{ customer.address or 'No address on file' }}
+              </div>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 48px;">
+              <i class="fa-solid fa-users-slash" style="font-size: 2.2rem; color: #cbd5e1; margin-bottom: 12px; display: block;"></i>
+              No customer records found yet. Customers will automatically appear once orders are placed.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block title %}SwiftCart - Shopping Cart{% endblock %}
+
+{% block content %}
+  <!-- Main Cart Content -->
+  <main class="container">
+    <div class="breadcrumb">
+      <a href="{{ url_for('index') }}">Home</a>
+      <i class="fa-solid fa-chevron-right" style="font-size: 0.75rem;"></i>
+      <span>Shopping Cart</span>
+    </div>
+
+    <div class="section-header" style="margin-bottom: 24px;">
+      <div>
+        <h1 class="section-title">Your Shopping Cart</h1>
+        <p class="section-subtitle">Review items before proceeding to checkout</p>
+      </div>
+    </div>
+
+    <!-- Active Cart Layout -->
+    <div class="cart-layout">
+      <!-- Items Table Card -->
+      <div class="cart-table-card">
+        <div style="overflow-x: auto;">
+          <table class="cart-table">
+            <thead>
+              <tr>
+                <th style="min-width: 240px;">Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Subtotal</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in cart_items %}
+              <tr>
+                <td>
+                  <div class="cart-item-info">
+                    <img src="{{ item.image }}" alt="{{ item.name }}">
+                    <div>
+                      <div class="cart-item-title"><a href="{{ url_for('product_detail', product_id=item.id) }}">{{ item.name }}</a></div>
+                      <small style="color: var(--text-muted); text-transform: uppercase;">Product</small>
+                    </div>
+                  </div>
+                </td>
+                <td class="cart-item-price">${{ "%.2f"|format(item.price) }}</td>
+                <td>
+                  <!-- পাইথনে কোয়ান্টিটি আপডেট ফর্ম -->
+                  <form action="{{ url_for('update_cart', product_id=item.id) }}" method="POST" style="display: flex; align-items: center; gap: 6px;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="99"
+                           onchange="this.form.submit()"
+                           style="width: 55px; padding: 6px; border: 1px solid var(--border-color); border-radius: 4px; text-align: center;">
+                    <button type="submit" class="btn btn-outline" style="padding: 4px 8px; font-size: 0.8rem;" title="Update quantity">
+                      <i class="fa-solid fa-rotate"></i>
+                    </button>
+                  </form>
+                </td>
+                <td class="cart-item-subtotal">${{ "%.2f"|format(item.subtotal) }}</td>
+                <td>
+                  <!-- পাইথনে আইটেম ডিলিট ফর্ম -->
+                  <form action="{{ url_for('remove_from_cart', product_id=item.id) }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-danger" style="padding: 6px 10px;" title="Remove">
+                      <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              {% else %}
+              <tr>
+                <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                  <i class="fa-solid fa-cart-shopping" style="font-size: 2rem; margin-bottom: 10px; display: block; color: #cbd5e1;"></i>
+                  Your shopping cart is currently empty.
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px; flex-wrap: wrap; gap: 14px;">
+          <a href="{{ url_for('products') }}" class="btn btn-outline">
+            <i class="fa-solid fa-arrow-left"></i> Continue Shopping
+          </a>
+          <!-- পুরো কার্ট খালি করার ফর্ম -->
+          <form action="{{ url_for('clear_cart') }}" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-danger">
+              <i class="fa-solid fa-trash-can"></i> Clear Cart
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Order Summary Card -->
+      <div class="summary-card">
+        <h3>Order Summary</h3>
+        
+        <div class="summary-row">
+          <span>Items Subtotal:</span>
+          <strong>${{ "%.2f"|format(subtotal) }}</strong>
+        </div>
+
+        <div class="summary-row">
+          <span>Estimated Shipping:</span>
+          <strong>${{ "%.2f"|format(shipping) }}</strong>
+        </div>
+
+        <div class="summary-row total-row">
+          <span>Grand Total:</span>
+          <span style="color: var(--primary);">${{ "%.2f"|format(grand_total) }}</span>
+        </div>
+
+        <!-- Coupon Code Box (Standard HTML Form) -->
+        <form action="/apply-coupon" method="POST" style="margin-top: 20px;">
+          <label style="font-size: 0.85rem; font-weight: 600; color: var(--secondary); display: block; margin-bottom: 6px;">
+            Have a Promo Code?
+          </label>
+          <div class="coupon-group">
+            <input type="text" name="coupon_code" placeholder="Enter coupon (e.g. SAVE10)" required>
+            <button type="submit" class="btn btn-secondary">Apply</button>
+          </div>
+        </form>
+
+        <div style="margin-top: 28px;">
+          <a href="{{ url_for('checkout') }}" class="btn btn-primary btn-block" style="padding: 14px; font-size: 1.05rem;">
+            Proceed to Checkout <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+
+        <div style="margin-top: 20px; text-align: center; font-size: 0.82rem; color: var(--text-muted);">
+          <i class="fa-solid fa-lock" style="color: var(--success); margin-right: 4px;"></i> Safe & 256-bit Encrypted Checkout
+        </div>
+      </div>
+    </div>
+  </main>
+{% endblock %}

@@ -1,0 +1,122 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}Manage Orders - SwiftCart Admin{% endblock %}
+{% block page_title %}Order Management{% endblock %}
+
+{% block content %}
+  <div class="admin-card">
+    <div class="admin-card-header">
+      <div>
+        <h2>All Orders ({{ orders|length }})</h2>
+        <p style="color: var(--text-muted); font-size: 0.88rem; margin-top: 2px;">
+          Track incoming purchases and update fulfillment status in real time
+        </p>
+      </div>
+      <div>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline btn-sm">
+          <i class="fa-solid fa-gauge-high"></i> Dashboard
+        </a>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th style="width: 100px;">Order ID</th>
+            <th>Item Details</th>
+            <th>Customer</th>
+            <th style="width: 80px; text-align: center;">Qty</th>
+            <th>Total Amount</th>
+            <th>Current Status</th>
+            <th style="text-align: right; min-width: 240px;">Update Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for order in orders %}
+          <tr>
+            <td>
+              <strong>#ORD-{{ order.id }}</strong>
+            </td>
+            <td>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                {% if order.product_image %}
+                <img 
+                  src="{{ order.product_image }}" 
+                  alt="{{ order.product_name }}" 
+                  style="width: 44px; height: 44px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border-color);"
+                >
+                {% endif %}
+                <div>
+                  <div style="font-weight: 700; color: var(--secondary);">
+                    {{ order.product_name or 'Product #' ~ order.product_id }}
+                  </div>
+                  {% if order.product_price %}
+                  <div style="font-size: 0.82rem; color: var(--text-muted);">
+                    Unit: ${{ "%.2f"|format(order.product_price) }}
+                  </div>
+                  {% endif %}
+                </div>
+              </div>
+            </td>
+            <td>
+              {% if order.customer_name %}
+              <div style="font-weight: 700; color: var(--secondary); font-size: 0.9rem;">
+                <i class="fa-solid fa-user" style="color: var(--primary); font-size: 0.8rem; margin-right: 4px;"></i> {{ order.customer_name }}
+              </div>
+              <div style="font-size: 0.82rem; color: var(--text-muted);">
+                {{ order.customer_email or '' }}
+              </div>
+              {% if order.customer_phone %}
+              <div style="font-size: 0.78rem; color: var(--text-muted);">
+                <i class="fa-solid fa-phone" style="font-size: 0.7rem;"></i> {{ order.customer_phone }}
+              </div>
+              {% endif %}
+              {% else %}
+              <span style="color: var(--text-muted); font-size: 0.85rem;">Guest / Direct</span>
+              {% endif %}
+            </td>
+            <td style="text-align: center;">
+              <span style="font-weight: 700;">{{ order.quantity }}</span>
+            </td>
+            <td>
+              <strong style="color: var(--secondary); font-size: 1rem;">
+                ${{ "%.2f"|format(order.total_price) }}
+              </strong>
+            </td>
+            <td>
+              {% set s = order.status|lower %}
+              <span class="badge badge-{{ s if s in ['pending', 'processing', 'shipped', 'delivered', 'cancelled'] else 'pending' }}">
+                <i class="fa-solid fa-circle-dot" style="font-size: 0.65rem; margin-right: 4px;"></i>
+                {{ order.status }}
+              </span>
+            </td>
+            <td style="text-align: right;">
+              <form action="{{ url_for('admin_update_order_status', order_id=order.id) }}" method="POST" style="display: inline-flex; align-items: center; gap: 8px;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <select name="status" class="form-control" style="padding: 6px 10px; font-size: 0.85rem; width: auto; min-width: 130px; height: 34px;">
+                  <option value="Pending" {{ 'selected' if order.status == 'Pending' }}>Pending</option>
+                  <option value="Processing" {{ 'selected' if order.status == 'Processing' }}>Processing</option>
+                  <option value="Shipped" {{ 'selected' if order.status == 'Shipped' }}>Shipped</option>
+                  <option value="Delivered" {{ 'selected' if order.status == 'Delivered' }}>Delivered</option>
+                  <option value="Cancelled" {{ 'selected' if order.status == 'Cancelled' }}>Cancelled</option>
+                </select>
+                <button type="submit" class="btn btn-primary btn-sm" title="Save Status">
+                  <i class="fa-solid fa-floppy-disk"></i> Save
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 48px;">
+              <i class="fa-solid fa-box-archive" style="font-size: 2.2rem; color: #cbd5e1; margin-bottom: 12px; display: block;"></i>
+              No customer orders recorded yet.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

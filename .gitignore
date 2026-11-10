@@ -1,0 +1,23 @@
+# Virtual environment
+env/
+venv/
+.venv/
+ENV/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment configuration
+.env
+
+# Other standalone repositories in subfolders
+freelancer_manager/
+product_research_tool/
+
+# OS / Editor files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

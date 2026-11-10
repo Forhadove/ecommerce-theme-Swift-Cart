@@ -1,0 +1,148 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}{{ 'Edit Product' if product else 'Add New Product' }} - SwiftCart Admin{% endblock %}
+{% block page_title %}{{ 'Edit Product: ' ~ product.name if product else 'Create New Product' }}{% endblock %}
+
+{% block content %}
+  <div style="margin-bottom: 20px;">
+    <a href="{{ url_for('admin_products') }}" class="btn btn-outline btn-sm">
+      <i class="fa-solid fa-arrow-left"></i> Back to Products
+    </a>
+  </div>
+
+  <div class="admin-card" style="max-width: 800px; margin: 0 auto;">
+    <div class="admin-card-header">
+      <div>
+        <h2>{{ 'Edit Product Details' if product else 'Add a New Product' }}</h2>
+        <p style="color: var(--text-muted); font-size: 0.88rem; margin-top: 2px;">
+          {{ 'Update existing item information, pricing and stock.' if product else 'Fill out the product information below to add it to your store.' }}
+        </p>
+      </div>
+    </div>
+
+    <form action="{{ url_for('admin_edit_product', product_id=product.id) if product else url_for('admin_add_product') }}" method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <div class="form-group">
+        <label for="name">Product Name <span style="color: var(--danger);">*</span></label>
+        <input 
+          type="text" 
+          id="name" 
+          name="name" 
+          class="form-control" 
+          placeholder="e.g. Wireless Noise-Cancelling Headphones"
+          value="{{ product.name if product else '' }}" 
+          required
+        >
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="price">Current Price ($) <span style="color: var(--danger);">*</span></label>
+          <input 
+            type="number" 
+            id="price" 
+            name="price" 
+            step="0.01" 
+            min="0" 
+            class="form-control" 
+            placeholder="29.99"
+            value="{{ product.price if product else '' }}" 
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="old_price">Original / Old Price ($)</label>
+          <input 
+            type="number" 
+            id="old_price" 
+            name="old_price" 
+            step="0.01" 
+            min="0" 
+            class="form-control" 
+            placeholder="39.99 (Optional for discounts)"
+            value="{{ product.old_price if product and product.old_price else '' }}"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="quantity">Stock Quantity <span style="color: var(--danger);">*</span></label>
+          <input 
+            type="number" 
+            id="quantity" 
+            name="quantity" 
+            step="1" 
+            min="0" 
+            class="form-control" 
+            placeholder="50"
+            value="{{ product.quantity if product and product.quantity is defined else '10' }}" 
+            required
+          >
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="image">Image URL <span style="color: var(--danger);">*</span></label>
+        <input 
+          type="url" 
+          id="image" 
+          name="image" 
+          class="form-control" 
+          placeholder="https://images.unsplash.com/..."
+          value="{{ product.image if product else '' }}" 
+          required
+          oninput="updateImagePreview(this.value)"
+        >
+        <small style="color: var(--text-muted); font-size: 0.8rem; margin-top: 4px; display: block;">
+          Provide a valid direct URL to the product image (e.g. Unsplash or hosted image).
+        </small>
+      </div>
+
+      <!-- Image Preview Box -->
+      <div id="imagePreviewContainer" style="margin-bottom: 20px; display: {{ 'block' if product and product.image else 'none' }};">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: var(--text-muted);">Image Preview</label>
+        <img 
+          id="imagePreview" 
+          src="{{ product.image if product and product.image else '' }}" 
+          alt="Product Preview" 
+          style="max-width: 140px; height: 140px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-color); display: block;"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="description">Product Description <span style="color: var(--danger);">*</span></label>
+        <textarea 
+          id="description" 
+          name="description" 
+          rows="5" 
+          class="form-control" 
+          placeholder="Describe product highlights, specs, materials, and benefits..." 
+          required
+        >{{ product.description if product else '' }}</textarea>
+      </div>
+
+      <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--border-color);">
+        <a href="{{ url_for('admin_products') }}" class="btn btn-outline">
+          Cancel
+        </a>
+        <button type="submit" class="btn btn-primary">
+          <i class="fa-solid fa-check"></i> {{ 'Update Product' if product else 'Create Product' }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    function updateImagePreview(url) {
+      const container = document.getElementById('imagePreviewContainer');
+      const img = document.getElementById('imagePreview');
+      if (url && (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('/'))) {
+        img.src = url;
+        container.style.display = 'block';
+      } else {
+        container.style.display = 'none';
+      }
+    }
+  </script>
+{% endblock %}
